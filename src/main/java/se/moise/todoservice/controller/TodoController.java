@@ -71,6 +71,16 @@ public class TodoController {
     }
 
     // ---------------------------------------------------
+    // PATCH (Toggle done/undone på en todo)
+    // ---------------------------------------------------
+    @PatchMapping("/{id}/toggle")
+    public ResponseEntity<Todo> toggle(@PathVariable Long id) {
+        return service.toggle(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // ---------------------------------------------------
     // DELETE (en todo)
     // ---------------------------------------------------
     @DeleteMapping("/{id}")
