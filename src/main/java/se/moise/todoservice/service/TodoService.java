@@ -26,13 +26,27 @@ public class TodoService {
     public Optional<Todo> find(Long id) { return repo.findById(id); }
 
     // ---------------------------------------------------
-    // SKRIV
+    // SKAPA
     // ---------------------------------------------------
     @Transactional
     public Todo create(String title) {
         return repo.save(new Todo(title));
     }
 
+    // ---------------------------------------------------
+    // UPPDATERA
+    // ---------------------------------------------------
+    @Transactional
+    public Optional<Todo> update(Long id, String newTitle) {
+        return repo.findById(id).map(todo -> {
+            todo.setTitle(newTitle);
+            return repo.save(todo);
+        });
+    }
+
+    // ---------------------------------------------------
+    // DELETE (en)
+    // ---------------------------------------------------
     @Transactional
     public boolean delete(Long id) {
         if (!repo.existsById(id)) return false;
@@ -41,25 +55,21 @@ public class TodoService {
     }
 
     // ---------------------------------------------------
-    // BULK-DELETE: radera flera id:n
+    // BULK-DELETE
     // ---------------------------------------------------
     @Transactional
     public BulkDeleteResponse deleteMany(List<Long> ids) {
-        // unika, filtrera bort null
         var unique = ids.stream()
                 .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
 
-        // vilka finns?
         var existing = repo.findAllById(unique).stream()
                 .map(Todo::getId)
                 .toList();
 
-        // radera de som finns
         repo.deleteAllById(existing);
 
-        // kvar = not found
         var notFound = new ArrayList<>(unique);
         notFound.removeAll(existing);
 
@@ -67,7 +77,7 @@ public class TodoService {
     }
 
     // ---------------------------------------------------
-    // DELETE ALL: radera allt
+    // DELETE ALL
     // ---------------------------------------------------
     @Transactional
     public void deleteAll() {

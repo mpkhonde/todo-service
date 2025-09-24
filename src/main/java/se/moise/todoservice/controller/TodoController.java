@@ -19,16 +19,22 @@ import java.util.List;
 public class TodoController {
 
     private final TodoService service;
-    public TodoController(TodoService service) { this.service = service; }
+
+    public TodoController(TodoService service) {
+        this.service = service;
+    }
 
     // ---------------------------------------------------
-    // GET
+    // GET ALL
     // ---------------------------------------------------
     @GetMapping
     public ResponseEntity<List<Todo>> list() {
         return ResponseEntity.ok(service.list());
     }
 
+    // ---------------------------------------------------
+    // GET BY ID
+    // ---------------------------------------------------
     @GetMapping("/{id}")
     public ResponseEntity<Todo> get(@PathVariable Long id) {
         return service.find(id)
@@ -37,7 +43,7 @@ public class TodoController {
     }
 
     // ---------------------------------------------------
-    // POST
+    // POST (JSON Body)
     // ---------------------------------------------------
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Todo> createJson(@Valid @RequestBody CreateTodoRequest req) {
@@ -45,6 +51,9 @@ public class TodoController {
         return ResponseEntity.created(URI.create("/api/todos/" + saved.getId())).body(saved);
     }
 
+    // ---------------------------------------------------
+    // POST (Query-param: ?title=Text)
+    // ---------------------------------------------------
     @PostMapping(params = "title")
     public ResponseEntity<Todo> createQuery(@RequestParam @NotBlank String title) {
         Todo saved = service.create(title);
@@ -52,7 +61,17 @@ public class TodoController {
     }
 
     // ---------------------------------------------------
-    // DELETE (en)
+    // PUT (Update todo by id)
+    // ---------------------------------------------------
+    @PutMapping("/{id}")
+    public ResponseEntity<Todo> update(@PathVariable Long id, @Valid @RequestBody CreateTodoRequest req) {
+        return service.update(id, req.title())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // ---------------------------------------------------
+    // DELETE (en todo)
     // ---------------------------------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -62,22 +81,23 @@ public class TodoController {
     }
 
     // ---------------------------------------------------
-    // DELETE (många)
+    // DELETE (många - query)
     // ---------------------------------------------------
-    // A) Query-param: DELETE /api/todos?ids=3,4,5
     @DeleteMapping(params = "ids", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BulkDeleteResponse> deleteManyQuery(@RequestParam List<Long> ids) {
         return ResponseEntity.ok(service.deleteMany(ids));
     }
 
-    // B) Path: DELETE /api/todos/bulk/3,4,5
+    // ---------------------------------------------------
+    // DELETE (många - path)
+    // ---------------------------------------------------
     @DeleteMapping("/bulk/{ids}")
     public ResponseEntity<BulkDeleteResponse> deleteManyPath(@PathVariable List<Long> ids) {
         return ResponseEntity.ok(service.deleteMany(ids));
     }
 
     // ---------------------------------------------------
-    // DELETE ALL: DELETE /api/todos
+    // DELETE ALL
     // ---------------------------------------------------
     @DeleteMapping
     public ResponseEntity<Void> deleteAll() {
