@@ -19,18 +19,18 @@ Byggd med **Spring Boot 3**, **Java 17**, **PostgreSQL 16** och körbar via **Do
 
 ## Endpoints
 
-| Metod   | Path                    | Beskrivning                  | Svar                           |
-|---------|-------------------------|------------------------------|--------------------------------|
-| POST    | `/api/todos`            | Skapa todo (JSON body)       | 201 Created + Location         |
-| POST    | `/api/todos?title=Text` | Skapa todo (query-param)     | 201 Created                    |
-| GET     | `/api/todos`            | Lista alla                   | 200 OK                         |
-| GET     | `/api/todos/{id}`       | Hämta en                     | 200 OK / 404 Not Found         |
-| PUT     | `/api/todos/{id}`       | Uppdatera en                 | 200 OK / 404 Not Found         |
-| PATCH   | `/api/todos/{id}/toggle`| Markera klar/oklar           | 200 OK / 404 Not Found         |
-| DELETE  | `/api/todos/{id}`       | Radera en                    | 204 No Content / 404 Not Found |
-| DELETE  | `/api/todos?ids=1,2,3`  | Radera många (query)         | 200 `{deleted[], notFound[]}`  |
-| DELETE  | `/api/todos/bulk/1,2,3` | Radera många (path)          | 200 `{deleted[], notFound[]}`  |
-| DELETE  | `/api/todos`            | Radera alla                  | 204 No Content                 |
+| Metod   | Path                     | Beskrivning                | Svar                           |
+|---------|--------------------------|----------------------------|--------------------------------|
+| POST    | `/api/todos`             | Skapa todo (JSON body)     | 201 Created + Location         |
+| POST    | `/api/todos?title=Text`  | Skapa todo (query-param)   | 201 Created                    |
+| GET     | `/api/todos`             | Lista alla                 | 200 OK                         |
+| GET     | `/api/todos/{id}`        | Hämta en                   | 200 OK / 404 Not Found         |
+| PUT     | `/api/todos/{id}`        | Uppdatera en todo          | 200 OK / 404 Not Found         |
+| PATCH   | `/api/todos/{id}/toggle` | Markera som klar/oklar     | 200 OK / 404 Not Found         |
+| DELETE  | `/api/todos/{id}`        | Radera en                  | 204 No Content / 404 Not Found |
+| DELETE  | `/api/todos?ids=1,2,3`   | Radera flera (query)       | 200 `{deleted[], notFound[]}`  |
+| DELETE  | `/api/todos/bulk/1,2,3`  | Radera flera (path)        | 200 `{deleted[], notFound[]}`  |
+| DELETE  | `/api/todos`             | Radera alla                | 204 No Content                 |
 
 ---
 
@@ -54,7 +54,7 @@ curl -i http://localhost:8080/api/todos/1
 # Uppdatera en
 curl -i -X PUT http://localhost:8080/api/todos/1 \
   -H "Content-Type: application/json" \
-  -d '{"title":"Uppdaterad todo"}'
+  -d '{"title":"Uppdaterad titel","done":true}'
 
 # Markera som klar/oklar
 curl -i -X PATCH http://localhost:8080/api/todos/1/toggle
@@ -62,31 +62,11 @@ curl -i -X PATCH http://localhost:8080/api/todos/1/toggle
 # Radera en
 curl -i -X DELETE http://localhost:8080/api/todos/1
 
-# Bulk-radera (query)
+# Radera flera (query)
 curl -s -X DELETE "http://localhost:8080/api/todos?ids=4,5,6"
 
-# Bulk-radera (path)
+# Radera flera (path)
 curl -s -X DELETE "http://localhost:8080/api/todos/bulk/7,8"
 
 # Radera alla
 curl -i -X DELETE http://localhost:8080/api/todos
-
-
----
-
-## Test
-Detta är en teständring för squash-merge.
-
--------------------------------------------------------------------------------------------------
-
-Kom igång
-
-1. Klona repo
-git clone https://github.com/mpkhonde/todo-service.git
-cd todo-service
-
--------------------------------------------------------------------------------------------------
-2. Bygg & starta med Docker
-docker-compose down -v   # stoppa och ta bort gamla containers
-docker-compose up --build
-

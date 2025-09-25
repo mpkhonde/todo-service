@@ -45,6 +45,17 @@ public class TodoService {
     }
 
     // ---------------------------------------------------
+    // TOGGLE DONE
+    // ---------------------------------------------------
+    @Transactional
+    public Optional<Todo> toggle(Long id) {
+        return repo.findById(id).map(todo -> {
+            todo.setDone(!todo.isDone());  // Växla mellan true/false
+            return repo.save(todo);
+        });
+    }
+
+    // ---------------------------------------------------
     // DELETE (en)
     // ---------------------------------------------------
     @Transactional
