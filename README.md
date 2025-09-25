@@ -71,6 +71,12 @@ curl -s -X DELETE "http://localhost:8080/api/todos/bulk/7,8"
 # Radera alla
 curl -i -X DELETE http://localhost:8080/api/todos
 
+
+---
+
+## Test
+Detta är en teständring för squash-merge.
+
 -------------------------------------------------------------------------------------------------
 
 Kom igång
